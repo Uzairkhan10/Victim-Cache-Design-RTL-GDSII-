@@ -19,7 +19,7 @@ module tb_tag_store;
     logic valid_read, dirty_read;
     logic [TAG_WIDTH-1:0] tag_read;
 
-    // ================= DUT INSTANTIATION =================
+    //  DUT INSTANTIATION 
     tag_store #(
         .TAG_WIDTH(TAG_WIDTH),
         .NUM_WAYS(NUM_WAYS)
@@ -41,10 +41,10 @@ module tb_tag_store;
         .tag_read(tag_read)
     );
 
-    // ================= CLOCK =================
+    //  CLOCK 
     always #5 clk = ~clk;
 
-    // ================= TASKS =================
+    //  TASKS 
 
     task reset_dut();
         rst_n = 0;
@@ -110,44 +110,44 @@ module tb_tag_store;
         dirty_clear = 0;
     endtask
 
-    // ================= TEST SEQUENCE =================
+    //  TEST SEQUENCE 
     initial begin
         clk = 0;
         reset_dut();
 
-        $display("---------- WRITE TAGS ----------");
+        $display(" WRITE TAGS");
         write_tag(0, 4'hA);
         write_tag(1, 4'hB);
         write_tag(2, 4'hC);
 
-        $display("---------- READ BACK ----------");
+        $display("READ BACK ");
         read_tag(0);  #1 $display("WAY0 → TAG=%h VALID=%b DIRTY=%b", tag_read, valid_read, dirty_read);
         read_tag(1);  #1 $display("WAY1 → TAG=%h VALID=%b DIRTY=%b", tag_read, valid_read, dirty_read);
         read_tag(2);  #1 $display("WAY2 → TAG=%h VALID=%b DIRTY=%b", tag_read, valid_read, dirty_read);
 
-        $display("---------- LOOKUP (HIT TEST) ----------");
+        $display(" LOOKUP (HIT TEST) ");
         lookup_tag_task(4'hB);
         #1 $display("Lookup B → HIT=%b WAY=%d", hit, hit_way_index);
 
         lookup_tag_task(4'hC);
         #1 $display("Lookup C → HIT=%b WAY=%d", hit, hit_way_index);
 
-        $display("---------- LOOKUP (MISS TEST) ----------");
+        $display(" LOOKUP (MISS TEST) ");
         lookup_tag_task(4'hF);
         #1 $display("Lookup F → HIT=%b", hit);
 
-        $display("---------- DIRTY BIT TEST ----------");
+        $display("DIRTY BIT TEST");
         set_dirty_bit(1);
         read_tag(1);  #1 $display("After DIRTY SET → WAY1 DIRTY=%b", dirty_read);
 
         clear_dirty_bit(1);
         read_tag(1);  #1 $display("After DIRTY CLEAR → WAY1 DIRTY=%b", dirty_read);
 
-        $display("---------- VALID CLEAR TEST ----------");
+        $display(" VALID CLEAR TEST ");
         clear_valid(1);
         read_tag(1);  #1 $display("After VALID CLEAR → WAY1 VALID=%b", valid_read);
 
-        $display("---------- FINAL LOOKUP AFTER INVALIDATE ----------");
+        $display("FINAL LOOKUP AFTER INVALIDATE");
         lookup_tag_task(4'hB);
         #1 $display("Lookup B After Invalidate → HIT=%b", hit);
 
