@@ -1,2 +1,3 @@
-# design-of-victim-cache_GDSII
+# Design of Victim Cache(RTL-GDSII)
 Digital Design of Victim Cache (RTL to GDSII)
+This project is all about the design of Victim Cache and taking it the the GDSII ....WORKING IN PROGRESS WILL TAKE A WEEK...
