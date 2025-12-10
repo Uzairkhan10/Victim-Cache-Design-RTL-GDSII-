@@ -1,2 +1,2 @@
-# design-of-victim-cache_GDSII
+# Design of Victim Cache(RTL-GDSII)
 Digital Design of Victim Cache (RTL to GDSII)
