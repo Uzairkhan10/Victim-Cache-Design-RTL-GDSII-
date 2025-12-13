@@ -2,17 +2,19 @@ module tag_store #(parameter TAG_WIDTH = 4, NUM_WAYS = 4)(
 	input clk, rst_n,
 	
 	input logic write_en, read_en, lookup_en,
-	input logic [(TAG_WIDTH - 1) : 0] tag_in;
-	input logic [($clog2(NUM_WAYS) - 1) : 0] way_index_in;
+	input logic [(TAG_WIDTH - 1) : 0] tag_in,
+	input logic [($clog2(NUM_WAYS) - 1) : 0] way_index_in,
 	
 	output logic hit,
 	//output logic [(NUM_WAYS - 1) : 0] hit_ways_vector, //each bit index representing the way number
-	output logic [($clog2(NUM_WAYS) - 1) : 0] hit_way_index; //here index the way number
+	output logic [($clog2(NUM_WAYS) - 1) : 0] hit_way_index, //here index the way number
 	 
 	input logic valid_clear, dirty_set, dirty_clear,
 	
 	output logic valid_read, dirty_read,
-	output logic [(TAG_WIDTH - 1) : 0] tag_read,	
+	//output logic [(TAG_WIDTH - 1) : 0] tag_read	
+	output logic [(NUM_WAYS - 1) : 0] valid_vector,
+	output logic [(NUM_WAYS - 1) : 0] dirty_vector
 );
 		
 	logic [(TAG_WIDTH - 1) : 0] tag_array [(NUM_WAYS - 1) : 0];
@@ -42,9 +44,17 @@ module tag_store #(parameter TAG_WIDTH = 4, NUM_WAYS = 4)(
 	
 	//combinational associative lookup
 	always_comb begin
+		//valid_vector = '0;
+		dirty_vector = '0;
+		valid_vector = '0;
+		hit_vector = '0;
 		if(lookup_en)begin
-			hit_vector =  '0;
-			for(int i = 0; i < NUM_WAYS; i++) begin	
+			//valid_vector = '0;
+			//dirty_vector = '0;
+			//hit_vector = '0;
+			for(int i = 0; i < NUM_WAYS; i++) begin
+				valid_vector[i] = valid_array[i];
+				dirty_vector[i] = dirty_array[i];	
 				if(valid_array[i] && (tag_array[i] == lookup_tag)) begin
 					hit_vector[i] = 1'b1;
 				end
@@ -67,12 +77,10 @@ module tag_store #(parameter TAG_WIDTH = 4, NUM_WAYS = 4)(
 	//combinational read			
 	always_comb begin
 		if(read_en) begin
-			tag_read = tag_array[read_way_index];
 			dirty_read = dirty_array[read_way_index];
 			valid_read = valid_array[read_way_index];		
 		end
 		else begin
-			tag_read = '0;
 			dirty_read = 1'b0;
 			valid_read = 1'b0;		
 		end
@@ -88,6 +96,7 @@ module tag_store #(parameter TAG_WIDTH = 4, NUM_WAYS = 4)(
 				dirty_array[i] <= 1'b0;
 			end
 		end
+		
 		else begin
 			if(write_en) begin
 				tag_array[write_way_index] <= write_tag;
@@ -113,3 +122,7 @@ module tag_store #(parameter TAG_WIDTH = 4, NUM_WAYS = 4)(
 		end
 	end
 endmodule
+
+
+
+
