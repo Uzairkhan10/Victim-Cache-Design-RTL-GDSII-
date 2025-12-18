@@ -1,0 +1,1 @@
+s1(18Dec2025:13:43:12):  xrun -timescale 1ns/1ps -access +rwc -sv l1_cache_dm.sv tb_l1_cache_dm.sv 
