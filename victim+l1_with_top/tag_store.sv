@@ -60,7 +60,7 @@ module tag_store_vc #(
         end
     end
 
-    // sequential writes / invalidate
+    // sequential writes / invalidates
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             for (int i = 0; i < NUM_WAYS; i++) begin
